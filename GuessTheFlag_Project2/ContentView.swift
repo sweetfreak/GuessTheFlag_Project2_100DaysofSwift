@@ -24,6 +24,20 @@ struct ContentView: View {
    @State private var countries = ["Estonia", "Germany", "Poland", "France", "Ireland", "Italy", "Nigeria", "Spain", "UK", "US", "Ukraine"].shuffled()
     //shuffled() randomizes the array!
     
+    let labels = [
+        "Estonia":"Flag with three horizontal stripes. Top stripe blue, middle stripe black, bottom strip white",
+        "Germany":"Flag with three vertical stripes. Top Strip black, middle stripe red, bottom stripe gold",
+        "Poland":"Flag with two horizontral strips. Top stripe white, bottom strip red",
+        "France":"Flag with three vertical stripes. Left Stripe blue, middle strip white, right stripe red",
+        "Ireland":"Flag with three vertical stripes. Left strip green, middle strip white, right stripe orange",
+        "Italy":"Flag with three vertical stripes. Left strip green, middle strip white, right stripe red",
+        "Nigeria":"Flag with three vertical stripes. Left strip green, middle strip white, right stripe green",
+        "Spain":"Flag with three horizontal stripes. Top thin stripe red, middle thick stripe is cold with crest on the left, botton thing strip is red",
+        "UK":"Flag with overlapping red and white crosses, both straight and diagonally, on a blue background",
+        "US":"Flag with many alternating red and white stripes, with white stars on a blue background in the top-left corner",
+        "Ukraine":"Flag with two horizontal strips. Top stripe blue, bottom stripe yellow",
+    ]
+    
     @State private var correctAnswer = Int.random(in: 0...2)
     
     @State private var showingScore = false
@@ -79,26 +93,20 @@ struct ContentView: View {
                         Button {
                                 withAnimation(.spring(duration:1, bounce: 0.4)){
                                     flagSpinAmount += 360
-                                
-                                    
                                 }
-                            
-                            
-                            
                             flagTapped(number)
-                            
+                        } label: {
+                            flagImage(flag: countries[number])
+                                .rotation3DEffect(
+                                    .degrees(number == correctAnswer ? flagSpinAmount : 0),
+                                    axis: (x: 0.0, y: 1.0, z: 0.0)
+                                )
+                                .animation(.default, value: showingScore)
+                                .opacity((showingScore && number != correctAnswer) ? 0.25 : 1)
+                                .animation(.easeOut(duration: 1), value: showingScore)
+                                
                         }
-                    label: {
-                        flagImage(flag: countries[number])
-                            .rotation3DEffect(
-                                .degrees(number == correctAnswer ? flagSpinAmount : 0),
-                                axis: (x: 0.0, y: 1.0, z: 0.0)
-                            )
-                            .animation(.default, value: showingScore)
-                            .opacity((showingScore && number != correctAnswer) ? 0.25 : 1)
-                            .animation(.easeOut(duration: 1), value: showingScore)
-                            
-                    }
+                        .accessibilityLabel(labels[countries[number], default: "Unknown flag"])
                        
                     
                                
@@ -125,7 +133,7 @@ struct ContentView: View {
         .alert(scoreTitle, isPresented: $showingScore) {
             Button("Continue", action: askQuestion)
         } message: {
-            Text("Your score is \(score) \n Questions Left: \(totalNumOfQuestions - questionsAsked)")
+            Text("Your score is \(score) \n. Questions Left: \(totalNumOfQuestions - questionsAsked)")
         }
         
         .alert(gameResult, isPresented: $gameOver) {
